@@ -1,0 +1,292 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+<div {% if message.tags %} class="alert alert {{ message.tags }} alert-dismissible text-white" role="alert"{% endif %}>
+  <span class="text-sm">{{ message }}</span>
+  <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endfor %}
+{% endif %}
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header pb-0">
+        <h6>Perbandingan Data Antar Kriteria</h6>
+      </div>
+      <div class="card-body px-0 pt-0 pb-2">
+        <div class="table-responsive p-0">
+          <form method="POST">
+            {% csrf_token %}
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-sm font-weight-bold">Nama Kriteria</th>
+                  <th class="text-sm text-center font-weight-bold ps-2">Skala Perbandingan</th>
+                  <th class="text-sm font-weight-bold ps-2">Nama Kriteria</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Group 1 -->
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1 ">
+                      <div class="d-flex flex-column ">
+                        <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C1}}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex justify-content-center">
+                      <div class="button-group" id="group-1">
+                          <button type="button" class="comparison-button" value="1/9" onclick="setActive(this, 'group-1')">9</button>
+                          <button type="button" class="comparison-button" value="1/8" onclick="setActive(this, 'group-1')">8</button>
+                          <button type="button" class="comparison-button" value="1/7" onclick="setActive(this, 'group-1')">7</button>
+                          <button type="button" class="comparison-button" value="1/6" onclick="setActive(this, 'group-1')">6</button>
+                          <button type="button" class="comparison-button" value="1/5" onclick="setActive(this, 'group-1')">5</button>
+                          <button type="button" class="comparison-button" value="1/4" onclick="setActive(this, 'group-1')">4</button>
+                          <button type="button" class="comparison-button" value="1/3" onclick="setActive(this, 'group-1')">3</button>
+                          <button type="button" class="comparison-button" value="1/2" onclick="setActive(this, 'group-1')">2</button>
+                          <button type="button" class="comparison-button" value="1" onclick="setActive(this, 'group-1')">1</button>
+                          <button type="button" class="comparison-button" value="2" onclick="setActive(this, 'group-1')">2</button>
+                          <button type="button" class="comparison-button" value="3" onclick="setActive(this, 'group-1')">3</button>
+                          <button type="button" class="comparison-button" value="4" onclick="setActive(this, 'group-1')">4</button>
+                          <button type="button" class="comparison-button" value="5" onclick="setActive(this, 'group-1')">5</button>
+                          <button type="button" class="comparison-button" value="6" onclick="setActive(this, 'group-1')">6</button>
+                          <button type="button" class="comparison-button" value="7" onclick="setActive(this, 'group-1')">7</button>
+                          <button type="button" class="comparison-button" value="8" onclick="setActive(this, 'group-1')">8</button>
+                          <button type="button" class="comparison-button" value="9" onclick="setActive(this, 'group-1')">9</button>
+                      </div>
+                    </div>
+                    <input type="hidden" name="group_1" id="group-1_value">
+                  </td>
+                  <td>
+                    <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C2}}</h6>
+                  </td>
+                </tr>
+                <!-- Group 2 -->
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1 ">
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C1}}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex justify-content-center">
+                      <div class="button-group" id="group-2">
+                          <button type="button" class="comparison-button" value="1/9" onclick="setActive(this, 'group-2')">9</button>
+                          <button type="button" class="comparison-button" value="1/8" onclick="setActive(this, 'group-2')">8</button>
+                          <button type="button" class="comparison-button" value="1/7" onclick="setActive(this, 'group-2')">7</button>
+                          <button type="button" class="comparison-button" value="1/6" onclick="setActive(this, 'group-2')">6</button>
+                          <button type="button" class="comparison-button" value="1/5" onclick="setActive(this, 'group-2')">5</button>
+                          <button type="button" class="comparison-button" value="1/4" onclick="setActive(this, 'group-2')">4</button>
+                          <button type="button" class="comparison-button" value="1/3" onclick="setActive(this, 'group-2')">3</button>
+                          <button type="button" class="comparison-button" value="1/2" onclick="setActive(this, 'group-2')">2</button>
+                          <button type="button" class="comparison-button" value="1" onclick="setActive(this, 'group-2')">1</button>
+                          <button type="button" class="comparison-button" value="2" onclick="setActive(this, 'group-2')">2</button>
+                          <button type="button" class="comparison-button" value="3" onclick="setActive(this, 'group-2')">3</button>
+                          <button type="button" class="comparison-button" value="4" onclick="setActive(this, 'group-2')">4</button>
+                          <button type="button" class="comparison-button" value="5" onclick="setActive(this, 'group-2')">5</button>
+                          <button type="button" class="comparison-button" value="6" onclick="setActive(this, 'group-2')">6</button>
+                          <button type="button" class="comparison-button" value="7" onclick="setActive(this, 'group-2')">7</button>
+                          <button type="button" class="comparison-button" value="8" onclick="setActive(this, 'group-2')">8</button>
+                          <button type="button" class="comparison-button" value="9" onclick="setActive(this, 'group-2')">9</button>
+                      </div>
+                    </div>
+                    <input type="hidden" name="group_2" id="group-2_value">
+                  </td>
+                  <td>
+                    <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C3}}</h6>
+                  </td>
+                </tr>
+                <!-- Group 3 -->
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1 ">
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C1}}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex justify-content-center">
+                      <div class="button-group" id="group-3">
+                          <button type="button" class="comparison-button" value="1/9" onclick="setActive(this, 'group-3')">9</button>
+                          <button type="button" class="comparison-button" value="1/8" onclick="setActive(this, 'group-3')">8</button>
+                          <button type="button" class="comparison-button" value="1/7" onclick="setActive(this, 'group-3')">7</button>
+                          <button type="button" class="comparison-button" value="1/6" onclick="setActive(this, 'group-3')">6</button>
+                          <button type="button" class="comparison-button" value="1/5" onclick="setActive(this, 'group-3')">5</button>
+                          <button type="button" class="comparison-button" value="1/4" onclick="setActive(this, 'group-3')">4</button>
+                          <button type="button" class="comparison-button" value="1/3" onclick="setActive(this, 'group-3')">3</button>
+                          <button type="button" class="comparison-button" value="1/2" onclick="setActive(this, 'group-3')">2</button>
+                          <button type="button" class="comparison-button" value="1" onclick="setActive(this, 'group-3')">1</button>
+                          <button type="button" class="comparison-button" value="2" onclick="setActive(this, 'group-3')">2</button>
+                          <button type="button" class="comparison-button" value="3" onclick="setActive(this, 'group-3')">3</button>
+                          <button type="button" class="comparison-button" value="4" onclick="setActive(this, 'group-3')">4</button>
+                          <button type="button" class="comparison-button" value="5" onclick="setActive(this, 'group-3')">5</button>
+                          <button type="button" class="comparison-button" value="6" onclick="setActive(this, 'group-3')">6</button>
+                          <button type="button" class="comparison-button" value="7" onclick="setActive(this, 'group-3')">7</button>
+                          <button type="button" class="comparison-button" value="8" onclick="setActive(this, 'group-3')">8</button>
+                          <button type="button" class="comparison-button" value="9" onclick="setActive(this, 'group-3')">9</button>
+                      </div>
+                    </div>
+                    <input type="hidden" name="group_3" id="group-3_value">
+                  </td>
+                  <td>
+                    <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C4}}</h6>
+                  </td>
+                </tr>
+                <!-- Group 4 -->
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1 ">
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C2}}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex justify-content-center">
+                      <div class="button-group" id="group-4">
+                          <button type="button" class="comparison-button" value="1/9" onclick="setActive(this, 'group-4')">9</button>
+                          <button type="button" class="comparison-button" value="1/8" onclick="setActive(this, 'group-4')">8</button>
+                          <button type="button" class="comparison-button" value="1/7" onclick="setActive(this, 'group-4')">7</button>
+                          <button type="button" class="comparison-button" value="1/6" onclick="setActive(this, 'group-4')">6</button>
+                          <button type="button" class="comparison-button" value="1/5" onclick="setActive(this, 'group-4')">5</button>
+                          <button type="button" class="comparison-button" value="1/4" onclick="setActive(this, 'group-4')">4</button>
+                          <button type="button" class="comparison-button" value="1/3" onclick="setActive(this, 'group-4')">3</button>
+                          <button type="button" class="comparison-button" value="1/2" onclick="setActive(this, 'group-4')">2</button>
+                          <button type="button" class="comparison-button" value="1" onclick="setActive(this, 'group-4')">1</button>
+                          <button type="button" class="comparison-button" value="2" onclick="setActive(this, 'group-4')">2</button>
+                          <button type="button" class="comparison-button" value="3" onclick="setActive(this, 'group-4')">3</button>
+                          <button type="button" class="comparison-button" value="4" onclick="setActive(this, 'group-4')">4</button>
+                          <button type="button" class="comparison-button" value="5" onclick="setActive(this, 'group-4')">5</button>
+                          <button type="button" class="comparison-button" value="6" onclick="setActive(this, 'group-4')">6</button>
+                          <button type="button" class="comparison-button" value="7" onclick="setActive(this, 'group-4')">7</button>
+                          <button type="button" class="comparison-button" value="8" onclick="setActive(this, 'group-4')">8</button>
+                          <button type="button" class="comparison-button" value="9" onclick="setActive(this, 'group-4')">9</button>
+                      </div>
+                    </div>
+                    <input type="hidden" name="group_4" id="group-4_value">
+                  </td>
+                  <td>
+                    <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C3}}</h6>
+                  </td>
+                </tr>
+                <!-- Group 5 -->
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1 ">
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C2}}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex justify-content-center">
+                      <div class="button-group" id="group-5">
+                          <button type="button" class="comparison-button" value="1/9" onclick="setActive(this, 'group-5')">9</button>
+                          <button type="button" class="comparison-button" value="1/8" onclick="setActive(this, 'group-5')">8</button>
+                          <button type="button" class="comparison-button" value="1/7" onclick="setActive(this, 'group-5')">7</button>
+                          <button type="button" class="comparison-button" value="1/6" onclick="setActive(this, 'group-5')">6</button>
+                          <button type="button" class="comparison-button" value="1/5" onclick="setActive(this, 'group-5')">5</button>
+                          <button type="button" class="comparison-button" value="1/4" onclick="setActive(this, 'group-5')">4</button>
+                          <button type="button" class="comparison-button" value="1/3" onclick="setActive(this, 'group-5')">3</button>
+                          <button type="button" class="comparison-button" value="1/2" onclick="setActive(this, 'group-5')">2</button>
+                          <button type="button" class="comparison-button" value="1" onclick="setActive(this, 'group-5')">1</button>
+                          <button type="button" class="comparison-button" value="2" onclick="setActive(this, 'group-5')">2</button>
+                          <button type="button" class="comparison-button" value="3" onclick="setActive(this, 'group-5')">3</button>
+                          <button type="button" class="comparison-button" value="4" onclick="setActive(this, 'group-5')">4</button>
+                          <button type="button" class="comparison-button" value="5" onclick="setActive(this, 'group-5')">5</button>
+                          <button type="button" class="comparison-button" value="6" onclick="setActive(this, 'group-5')">6</button>
+                          <button type="button" class="comparison-button" value="7" onclick="setActive(this, 'group-5')">7</button>
+                          <button type="button" class="comparison-button" value="8" onclick="setActive(this, 'group-5')">8</button>
+                          <button type="button" class="comparison-button" value="9" onclick="setActive(this, 'group-5')">9</button>
+                      </div>
+                    </div>
+                    <input type="hidden" name="group_5" id="group-5_value">
+                  </td>
+                  <td>
+                    <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C4}}</h6>
+                  </td>
+                </tr>
+                <!-- Group 6 -->
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1 ">
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C3}}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex justify-content-center">
+                    <div class="button-group" id="group-6">
+                        <button type="button" class="comparison-button" value="1/9" onclick="setActive(this, 'group-6')">9</button>
+                        <button type="button" class="comparison-button" value="1/8" onclick="setActive(this, 'group-6')">8</button>
+                        <button type="button" class="comparison-button" value="1/7" onclick="setActive(this, 'group-6')">7</button>
+                        <button type="button" class="comparison-button" value="1/6" onclick="setActive(this, 'group-6')">6</button>
+                        <button type="button" class="comparison-button" value="1/5" onclick="setActive(this, 'group-6')">5</button>
+                        <button type="button" class="comparison-button" value="1/4" onclick="setActive(this, 'group-6')">4</button>
+                        <button type="button" class="comparison-button" value="1/3" onclick="setActive(this, 'group-6')">3</button>
+                        <button type="button" class="comparison-button" value="1/2" onclick="setActive(this, 'group-6')">2</button>
+                        <button type="button" class="comparison-button" value="1" onclick="setActive(this, 'group-6')">1</button>
+                        <button type="button" class="comparison-button" value="2" onclick="setActive(this, 'group-6')">2</button>
+                        <button type="button" class="comparison-button" value="3" onclick="setActive(this, 'group-6')">3</button>
+                        <button type="button" class="comparison-button" value="4" onclick="setActive(this, 'group-6')">4</button>
+                        <button type="button" class="comparison-button" value="5" onclick="setActive(this, 'group-6')">5</button>
+                        <button type="button" class="comparison-button" value="6" onclick="setActive(this, 'group-6')">6</button>
+                        <button type="button" class="comparison-button" value="7" onclick="setActive(this, 'group-6')">7</button>
+                        <button type="button" class="comparison-button" value="8" onclick="setActive(this, 'group-6')">8</button>
+                        <button type="button" class="comparison-button" value="9" onclick="setActive(this, 'group-6')">9</button>
+                    </div>
+                    <input type="hidden" name="group_6" id="group-6_value">
+                  </td>
+                  <td>
+                    <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{kriteria.C4}}</h6>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary ms-4 mt-3">cek konsistensi</button>
+            
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  function setActive(button, group) {
+    // Menghapus kelas 'active' dari semua tombol di grup yang sama
+    let buttons = document.querySelectorAll(`#${group} .comparison-button`);
+    buttons.forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+
+    // Menambahkan kelas 'active' ke tombol yang diklik dalam grup yang sama
+    button.classList.add('active');
+
+    // Menyimpan nilai tombol yang diklik ke input tersembunyi
+    document.getElementById(`${group}_value`).value = button.value;
+
+    // Menambahkan log untuk memeriksa nilai yang disimpan
+    console.log(`Group: ${group}, Value: ${button.value}`);
+  }
+
+  // Mencegah pengiriman form jika tombol lain yang diklik selain tombol submit
+  document.querySelector('form').addEventListener('submit', function(event) {
+    // Tambahkan logika jika diperlukan untuk validasi form sebelum dikirim
+    console.log("Form submitted");
+  });
+</script>
+{% endblock %}

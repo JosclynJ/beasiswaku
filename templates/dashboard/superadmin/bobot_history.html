@@ -1,0 +1,52 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <!-- Card header -->
+      <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">History Bobot</h5> 
+      </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-flush" id="datatable-search">
+          <thead class="thead-light">
+            <tr>
+              <th>No</th>
+              <th>Nama</th>
+              <th>Created at</th>
+              <th>Created by</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for p in perhitungan %}
+            <tr>
+              <td class="text-sm font-weight-normal">{{forloop.counter}}</td>
+              <td class="text-sm font-weight-normal">{{p.matrix}}</td>
+              <td class="text-sm font-weight-normal">{{kat.created_at}}</td>
+              <td class="text-sm font-weight-normal">{{kat.created_by}}</td>
+              <td class="text-sm font-weight-normal text-center">
+                <a class="btn btn-success px-3 py-2" onClick="return confirm('Yakin ingin menghapus?')" href="#">Jadikan Aktif <i class="material-icons">check_circle_outline</i></a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock  %}
+
+{% block js %}
+  <script src="{% static 'dashboard/assets/js/plugins/datatables.js' %}"></script>
+  <script>
+    const dataTableSearch = new simpleDatatables.DataTable("#datatable-search", {
+      searchable: true,
+      fixedHeight: true
+    });
+  </script>
+{% endblock %}

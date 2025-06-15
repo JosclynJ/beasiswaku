@@ -1,0 +1,360 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load auth_extras %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if user|has_group:"Admin" or user|has_group:"SuperAdmin" %}
+  <div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6 mt-lg-0 mt-4">
+      <div class="card ">
+        <div class="card-header p-3 pt-2 bg-transparent">
+          <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons opacity-10">person</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize ">Jumlah Mahasiswa</p>
+            <h4 class="mb-0 ">{{total_mahasiswa}}</h4>
+          </div>
+        </div>
+        <hr class="horizontal my-0 dark">
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 mt-lg-0 mt-4">
+      <div class="card ">
+        <div class="card-header p-3 pt-2 bg-transparent">
+          <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons opacity-10">person_add_alt</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize ">Jumlah Pendaftar</p>
+            <h4 class="mb-0 ">{{total_pendaftar}}</h4>
+          </div>
+        </div>
+        <hr class="horizontal my-0 dark">
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 mt-lg-0 mt-4">
+      <div class="card  mb-2">
+        <div class="card-header p-3 pt-2 bg-transparent">
+          <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons opacity-10">how_to_reg</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize ">Jumlah Lolos</p>
+            {% if perhitungan_selesai %}
+            <h4 class="mb-0 ">{{total_lolos}}</h4>
+            {% else %}
+            <p class="mb-1 mt-1 text-md fw-bolder text-dark">Belum dihitung</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 mt-lg-0 mt-4">
+      <div class="card  mb-2">
+        <div class="card-header p-3 pt-2 bg-transparent">
+          <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons opacity-10">person_off</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize ">Jumlah Ditolak</p>
+            {% if perhitungan_selesai %}
+            <h4 class="mb-0 ">{{total_ditolak}}</h4>
+            {% else %}
+            <p class="mb-1 mt-1 text-md fw-bolder text-dark">Belum dihitung</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-8 mt-3">
+      <div class="card h-100">
+        <div class="card-header pb-0 p-3">
+          <h6 class="mb-0">Statistik Pendaftar</h6>
+        </div>
+        <div class="card-body pb-0 p-3">
+          <ul class="list-group">
+            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-0">
+              <div class="w-100">
+                <div class="d-flex mb-2">
+                  <span class="me-2 text-sm text-capitalize">Jumlah Mahasiswa</span>
+                  <span class="ms-auto text-sm">100%</span>
+                </div>
+                <div>
+                  <div class="progress progress-md">
+                    <div style="width:100% !important;" class="progress-bar bg-gradient-primary" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+              <div class="w-100">
+                <div class="d-flex mb-2">
+                  <span class="me-2 text-sm text-capitalize">Jumlah Pendaftar</span>
+                  <span class="ms-auto text-sm">{{persenan_daftar|floatformat:0}}%</span>
+                </div>
+                <div>
+                  <div class="progress progress-md">
+                    <div style="width: {{persenan_daftar|floatformat:0}}% !important;" class="progress-bar bg-gradient-info" role="progressbar"></div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-4 mt-3">
+      <div class="card h-100">
+        <div class="card-header pb-0 p-3">
+          <div class="d-flex justify-content-between">
+            <h6 class="mb-0">Statistik Penerimaan</h6>
+            </button>
+          </div>
+        </div>
+        <div class="card-body pb-0 pt-0 p-3">
+          <div class="row">
+            <div class="col-7 text-start">
+              <div class="chart">
+                {% if perhitungan_selesai %}
+                <canvas id="chart-pie" class="chart-canvas" height="200"></canvas>
+              </div>
+              {% else %}
+              <span class="text-dark text-sm mt-5">Data Belum Dihitung</span>
+              {% endif %}
+            </div>
+            <div class="col-5 my-auto">
+              <span class="badge badge-md badge-dot me-4 d-block text-start">
+                <i class="bg-success"></i>
+                <span class="text-dark text-xs">Jumlah Lolos</span>
+              </span>
+              <span class="badge badge-md badge-dot me-4 d-block text-start">
+                <i class="bg-dark"></i>
+                <span class="text-dark text-xs">Jumlah Ditolak</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if user|has_group:"User" %}
+    {% if perhitungan_selesai %}
+    <div class="alert alert-danger text-white" role="alert">
+      <span class="text-sm">Pendaftaran Sudah ditutup. Silahkan cek status dengan tombol disamping</span>
+      <button type="button" class="btn btn-info px-3 py-2 m-0 ms-1" data-bs-toggle="modal" data-bs-target="#cekModal">
+        cek
+      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="cekModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Pengumuman</h5>
+              <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h3 class="text-center text-dark">
+                {% if mahasiswa_data.is_lolos == 1 %}
+                    Selamat Anda Lolos! <br>
+                    Ranking: {{mahasiswa_data.rank}}
+                {% elif mahasiswa_data.is_lolos == 0 %}
+                    Maaf Anda Ditolak! <br>
+                    Ranking: {{mahasiswa_data.rank}}
+                {% else %}
+                    Anda Belum Mendaftar
+                {% endif %}
+            </h3>
+            </div>
+            <div class="modal-footer d-flex justify-content-center align-items-center">
+              <button type="button" class="btn bg-gradient-secondary " data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="alert alert-success text-white" role="alert">
+      <span class="text-sm">Pendaftaran sudah dibuka. Silahkan melengkapi biodata!</span>
+    </div>
+    {% endif %}
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Syarat Beasiswa</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kriteria</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Keterangan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <span class="badge badge-primary mb-0 px-3 py-1 ms-3">IPK</span>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-normal mb-0">Harus diantara 3.00 hingga 4.00</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span class="badge badge-info mb-0 px-3 py-1 ms-3">Penghasilan Orang Tua</span>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-normal mb-0">Harus diantara Rp1.500.000 hingga Rp6.000.000</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span class="badge badge-success mb-0 px-3 py-1 ms-3">Jumlah Tanggungan</span>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-normal mb-0">Harus diantara 1 hingga 6 orang</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span class="badge badge-warning mb-0 px-3 py-1 ms-3">Usia</span>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-normal mb-0">Harus diantara 18 hingga 30 tahun</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% comment %} <div class="col-4">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Syarat Beasiswa</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kriteria</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Keterangan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <span class="badge badge-primary mb-0 px-3 py-1 ms-3">IPK</span>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-normal mb-0">Harus diantara 3.00 hingga 4.00</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span class="badge badge-info mb-0 px-3 py-1 ms-3">Penghasilan Orang Tua</span>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-normal mb-0">Harus diantara Rp1.500.000 hingga Rp6.000.000</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span class="badge badge-success mb-0 px-3 py-1 ms-3">Jumlah Tanggungan</span>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-normal mb-0">Harus diantara 1 hingga 6 orang</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span class="badge badge-warning mb-0 px-3 py-1 ms-3">Usia</span>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-normal mb-0">Harus diantara 18 hingga 30 tahun</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div> {% endcomment %}
+      </div>
+  {% endif %}
+{% endif %}
+{% endblock  %}
+
+{% block js %}
+<script>
+  var ctx2 = document.getElementById("chart-pie").getContext("2d");
+    // Pie chart
+    new Chart(ctx2, {
+      type: "pie",
+      data: {
+        labels: ['Jumlah Lolos', 'Jumlah Ditolak'],
+        datasets: [{
+          label: "Projects",
+          weight: 9,
+          cutout: 0,
+          tension: 0.9,
+          pointRadius: 2,
+          borderWidth: 1,
+          backgroundColor: ['#4CAF50', '#344767'],
+          data: [{{ total_lolos }}, {{ total_ditolak }}],
+          fill: false
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false,
+              color: '#c1c4ce5c'
+            },
+            ticks: {
+              display: false
+            }
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false,
+              color: '#c1c4ce5c'
+            },
+            ticks: {
+              display: false,
+            }
+          },
+        },
+      },
+    });
+
+</script>
+{% endblock %}

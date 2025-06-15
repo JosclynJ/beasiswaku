@@ -1,0 +1,140 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <!-- Card header -->
+      <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Daftar Mahasiswa</h5> 
+        {% if perhitungan_selesai %}
+        <a href="{% url 'ahp:buka_beasiswa' %}" class="btn btn-info px-3 py-2 m-0"><i class="material-icons">refresh</i>Buka kembali pendaftaran</a>
+        {% else %}
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-success px-3 py-2 m-0" data-bs-toggle="modal" data-bs-target="#kuotaModal">
+          <i class="material-icons">equalizer</i>Finalisasi Ranking
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="kuotaModal" tabindex="-1" role="dialog" aria-labelledby="kuotaModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title font-weight-normal" id="kuotaModalLabel">Jumlah Kuota</h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <!-- Gunakan form biasa untuk mengirim data -->
+                <form id="kuotaForm" action="{% url 'ahp:proses_ranking' %}" method="POST">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                    <input type="number" class="form-control" id="kuota" name="kuota" placeholder="Masukkan jumlah kuota mahasiswa yang lolos" required>
+                  </div>
+                  <button type="submit" class="btn bg-gradient-primary">Finalisasi</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-flush" id="datatable-search">
+          <thead class="thead-light">
+            <tr>
+              {% if perhitungan_selesai %}
+              <th>Rank</th>
+              {% else %}
+              <th>No</th>
+              {% endif %}
+              <th>Nim</th>
+              <th>Nama Mahasiswa</th>
+              <th>IPK</th>
+              <th>Penghasilan</th>
+              <th>Tgg</th>
+              <th>Usia</th>
+              {% if perhitungan_selesai %}
+              <th>Score</th>
+              <th>Status</th>
+              {% else %}
+              <th class="text-center">Action</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in daftar_mahasiswa %}
+                <tr>
+                  {% if perhitungan_selesai %}
+                  <td class="text-sm font-weight-normal text-dark">
+                    {{m.rank}}
+                  </td>
+                  {% else %}
+                    <td class="text-sm font-weight-normal text-dark">
+                      {{ forloop.counter }}
+                    </td>
+                  {% endif %}
+                    <td class="text-sm font-weight-normal text-dark">
+                      {{ m.user.username }}
+                    </td>
+                    <td class="text-sm font-weight-normal text-dark">
+                        {{ m.user.first_name|default:"-" }} {{ m.user.last_name|default:"-" }}
+                    </td>
+                    <td class="text-sm font-weight-normal text-dark">
+                        {{ m.ipk }}
+                    </td>
+                    <td class="text-sm font-weight-normal text-dark">
+                        Rp {{ m.penghasilan_orang_tua|floatformat:0|intdot }}
+                    </td>
+                    <td class="text-sm font-weight-normal text-dark">
+                        {{ m.jumlah_tanggungan }}
+                    </td>
+                    <td class="text-sm font-weight-normal text-dark">
+                        {{ m.usia }}
+                    </td>
+                    {% if perhitungan_selesai %}
+                    <td class="text-sm font-weight-normal text-dark">
+                      {{m.total_score|floatformat:3}}
+                    </td>
+                    <td class="text-sm font-weight-normal text-dark">
+                      {% if m.is_lolos %}
+                      <span class="badge rounded-pill bg-success ms-2">Lolos</span>
+                      {% elif m.is_lolos == False %}
+                      <span class="badge rounded-pill bg-danger ms-2">Ditolak</span>
+
+                      {% else %}
+                      <span class="badge rounded-pill bg-danger ms-2">Belum Diproses</span>
+
+                      {% endif %}
+                    </td>
+                    {% else %}
+                    {% endif %}
+                    {% if perhitungan_selesai %}
+                    {% else %}
+                    <td class="text-sm font-weight-normal text-center">
+                        <a class="btn btn-warning px-3 py-2" href="{% url 'admin_mahasiswa_list_edit' m.user_id %}"><i class="material-icons">edit_note</i>Edit</a>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock  %}
+
+{% block js %}
+  <script src="{% static 'dashboard/assets/js/plugins/datatables.js' %}"></script>
+  <script>
+    const dataTableSearch = new simpleDatatables.DataTable("#datatable-search", {
+      searchable: true,
+      fixedHeight: true
+    });
+  </script>
+{% endblock %}

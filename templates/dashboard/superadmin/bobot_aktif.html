@@ -1,0 +1,266 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+<div {% if message.tags %} class="alert alert {{ message.tags }} alert-dismissible text-white" role="alert"{% endif %}>
+  <span class="text-sm">{{ message }}</span>
+  <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endfor %}
+{% endif %}
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header pb-0">
+        <h6>Matriks Perbandingan</h6>
+      </div>
+      <div class="card-body px-0 pt-0 pb-2">
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-secondary text-sm font-weight-bold">Kriteria</th>
+                <th class="text-secondary text-sm font-weight-bold ps-2">{{ kriteria.C1 }}</th>
+                <th class="text-secondary text-sm font-weight-bold ps-2">{{ kriteria.C2 }}</th>
+                <th class="text-secondary text-sm font-weight-bold ps-2">{{ kriteria.C3 }}</th>
+                <th class="text-secondary text-sm font-weight-bold ps-2">{{ kriteria.C4 }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in kriteria %}
+              <tr>
+                <!-- Menampilkan row_kriteria di kolom pertama -->
+                <td>
+                  <div class="d-flex px-3 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{ kriteria|getattr_dynamic:row }}</h6>
+                    </div>
+                  </div>
+                </td>
+                <!-- Menampilkan nilai perbandingan untuk setiap kolom berdasarkan row_kriteria dan column_kriteria -->
+                {% for col in kriteria %}
+                <td>
+                  {% with current_row=row %}
+                    {% with current_col=col %}
+                      {% if matriks_perbandingan %}
+                        {% for data in matriks_perbandingan %}
+                          {% if data.row_kriteria == current_row and data.column_kriteria == current_col %}
+                            {{ data.value|decimal_to_fraction }}
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endwith %}
+                  {% endwith %}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header pb-0">
+        <h6>Matriks Normalisasi</h6>
+      </div>
+      <div class="card-body px-0 pt-0 pb-2">
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-secondary text-sm font-weight-bold">Kriteria</th>
+                <th class="text-secondary text-sm font-weight-bold ps-2">{{ kriteria.C1 }}</th>
+                <th class="text-secondary text-sm font-weight-bold ps-2">{{ kriteria.C2 }}</th>
+                <th class="text-secondary text-sm font-weight-bold ps-2">{{ kriteria.C3 }}</th>
+                <th class="text-secondary text-sm font-weight-bold ps-2">{{ kriteria.C4 }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in kriteria %}
+                <tr>
+                  <!-- Menampilkan row_kriteria di kolom pertama -->
+                  <td>
+                    <div class="d-flex px-3 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-secondary text-sm font-weight-bold">{{ kriteria|getattr_dynamic:row }}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <!-- Menampilkan nilai matriks normalisasi untuk setiap kolom -->
+                  {% for col in kriteria %}
+                  <td>
+                    {% with current_row=row %}
+                      {% with current_col=col %}
+                        {% for data in matriks_normalisasi %}
+                          {% if data.row_kriteria == current_row and data.column_kriteria == current_col %}
+                            {{ data.normalized_value|floatformat:3 }}
+                          {% endif %}
+                        {% endfor %}
+                      {% endwith %}
+                    {% endwith %}
+                  </td>
+                {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header pb-0">
+        <h6>Bobot Kriteria</h6>
+      </div>
+      <div class="card-body px-0 pt-0 pb-2">
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-secondary text-sm font-weight-bold">Nama Kriteria</th>
+                <th class="text-secondary text-sm font-weight-bold">Bobot</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bobot in bobot_kriteria %}
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <span class="mb-0 text-secondary text-sm">{{ kriteria|getattr_dynamic:bobot.kriteria }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex px-3 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <span class="mb-0 text-secondary text-sm">{{ bobot.weight|floatformat:3 }}</span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header pb-0">
+        <h6>Rasio Konsistensi</h6>
+      </div>
+      <div class="card-body px-0 pt-0 pb-2">
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-secondary text-sm font-weight-bold">Nama Kriteria</th>
+                <th class="text-secondary text-sm font-weight-bold">Matriks Jumlah Tertimbang</th>
+                <th class="text-secondary text-sm font-weight-bold">Bobot</th>
+                <th class="text-secondary text-sm font-weight-bold">Eigen Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bobot in bobot_kriteria %}
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <span class="mb-0 text-secondary text-sm">{{ kriteria|getattr_dynamic:bobot.kriteria }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex px-3 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <span class="mb-0 text-secondary text-sm">{{ bobot.weighted_sum_matrix|floatformat:3 }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex px-3 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <span class="mb-0 text-secondary text-sm">{{ bobot.weight|floatformat:3 }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex px-3 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <span class="mb-0 text-secondary text-sm">{{ bobot.eigen_value|floatformat:3 }}</span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header pb-0">
+        <h6>Validasi Konsistensi</h6>
+      </div>
+      <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="text-secondary text-sm font-weight-bold">Lambda Max</th>
+                  <th class="text-secondary text-sm font-weight-bold ps-2">CI</th>
+                  <th class="text-secondary text-sm font-weight-bold ps-2">CR</th>
+                  <th class="text-secondary text-sm font-weight-bold ps-2">Hasil</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="d-flex px-3 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        {{ perhitungan.lambda_max|floatformat:3 }}
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{ perhitungan.CI|floatformat:3 }}</td>
+                  <td>{{ perhitungan.CR|floatformat:3 }}</td>
+                  {% if perhitungan.CR <= 0.1 %}
+                    <td><span class="badge badge-sm bg-success">Valid (CR ≤ 0.1)</span></td>
+                  {% else %}
+                    <td><span class="badge badge-sm bg-danger">Tidak Valid (CR ≥ 0.1)</span></td>
+                  {% endif %}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

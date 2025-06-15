@@ -1,0 +1,60 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+<div class="row mt-4">
+  <div class="col-lg-12 col-12 mx-auto position-relative">
+    <div class="card">  
+      <div class="card-header p-3 pt-2">
+        <div class="icon icon-lg icon-shape bg-gradient-dark shadow text-center border-radius-xl mt-n4 me-3 float-start">
+          <i class="material-icons opacity-10">person_add</i>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <h6 class="mb-0">
+            {% if form.username.value %}
+            Edit Akun Admin
+            {% else %}
+              Tambah Akun Admin
+            {% endif %}
+          </h6> 
+          <a href="{% url "superadmin_admin_list" %}" class="btn btn-secondary px-3 py-2 m-0 mt-2"><i class="material-icons">menu_open</i>Kembali</a>
+        </div>
+      </div>
+      <div class="card-body pt-2"> 
+        <form method="POST">
+            {% csrf_token %}
+            <br>
+            <div class="input-group input-group-dynamic {% if form.username.value %}is-filled{% endif %}">
+                <label for="username" class="form-label">Username</label>
+                {% if form.username.value %}
+                    <!-- Form untuk edit, menampilkan username admin yang sedang diedit -->
+                    <input type="hidden" name="username" value="{{ form.username.value }}">
+                    <input type="text" class="form-control" value="{{ form.username.value }}" disabled>
+                {% else %}
+                    <!-- Form untuk tambah, menampilkan form input untuk username -->
+                    {{ form.username }}
+                {% endif %}
+            </div> <br>
+    
+            <!-- First Name -->
+            <div class="input-group input-group-dynamic {% if form.first_name.value %}is-filled{% endif %}">
+                <label for="first_name" class="form-label">Nama Depan</label>
+                {{ form.first_name }}
+            </div> <br>
+    
+            <!-- Last Name -->
+            <div class="input-group input-group-dynamic {% if form.last_name.value %}is-filled{% endif %}">
+                <label for="last_name" class="form-label">Nama Belakang</label>
+                {{ form.last_name }}
+            </div>
+            <!-- Hidden fields to store values when editing -->
+            <input type="hidden" name="password1" value="{{ form.username.value }}">
+            <input type="hidden" name="password2" value="{{ form.username.value }}">
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" name="button" class="btn bg-gradient-dark m-0 ms-2">Simpan</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

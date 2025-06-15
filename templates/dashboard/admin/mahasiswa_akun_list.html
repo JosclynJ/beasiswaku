@@ -1,0 +1,60 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <!-- Card header -->
+      <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Akun Mahasiswa</h5> 
+        <a class="btn btn-success px-3 py-2 m-0" href="{% url "admin_mahasiswa_akun_tambah" %}"><i class="material-icons">add</i> Tambah</a>
+      </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-flush" id="datatable-search">
+          <thead class="thead-light">
+            <tr>
+              <th>No</th>
+              <th>Nim</th>
+              <th>Nama Mahasiswa</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for m in daftar_mahasiswa %}
+            <tr> 
+              <td class="text-sm font-weight-normal">{{forloop.counter}}</td>
+              <td class="text-sm font-weight-normal text-dark">
+                {{ m.user.username }}
+              </td>
+              <td class="text-sm font-weight-normal text-dark">{{m.user.first_name|default:"-"}} {{m.user.last_name|default:"-"}}</td>
+
+              <td class="text-sm font-weight-normal text-center">
+                <a class="btn btn-warning px-3 py-2" href="{% url 'admin_mahasiswa_akun_edit' m.user_id %}"><i class="material-icons">edit_note</i> Edit</a>
+                <a class="btn btn-danger px-3 py-2" href="{% url 'admin_mahasiswa_akun_hapus' m.user.id %}" onclick="return confirmHapus('{{ m.user.username }}')"><i class="material-icons">delete</i> Hapus</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock  %}
+
+{% block js %}
+  <script src="{% static 'dashboard/assets/js/plugins/datatables.js' %}"></script>
+  <script>
+    const dataTableSearch = new simpleDatatables.DataTable("#datatable-search", {
+      searchable: true,
+      fixedHeight: true
+    });
+
+    function confirmHapus(nim) {
+      return confirm("Apakah Anda yakin ingin menghapus akun dengan NIM: " + nim + "?");
+  }
+  </script>
+{% endblock %}
